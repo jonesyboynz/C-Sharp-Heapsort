@@ -1,7 +1,14 @@
+//Implementation of a binary minheap
+//By Simon Jones
+//14/3/2017
+
 using System;
 using System.Collections.Generic;
 
+
 namespace csharp_heapsort
+	
+
 {
 	class Heap{ //A binary minheap
 		private List<int> heap_array;
@@ -11,7 +18,7 @@ namespace csharp_heapsort
 			//Constructs a minheap
 			count = 0;
 			heap_array = new List<int>();
-			heap_array.Add (0);
+			heap_array.Add (0); //The first element in the minheap array is not used. This makes the first element in the heap start at index 1 which simplifies parent/child node index calculations
 		}
 
 		public int Peek(){
@@ -104,17 +111,41 @@ namespace csharp_heapsort
 		}
 
 		public List<int> Sort(){
+			//Returns a sorted array of the heap (smalled-to-largest)
 			List<int> heap_copy = new List<int>(heap_array);
 			List<int> sorted_heap = new List<int>();
+			int length = Length ();
 			while (Length() > 0) {
 				sorted_heap.Add (Pop ());
 			}
 			heap_array = new List<int> (heap_copy);
+			count = length;
 			return sorted_heap;
 		}
 
 		public List<int> GetHeapList(){
+			//Returns a copy of the heap array
 			return new List<int> (heap_array);
+		}
+
+		public bool IsHeap(int index){
+			//Indicates if a sub-tree saisfies the heap property
+			int left_child_index = index * 2;
+			int right_child_index = index * 2 + 1;
+			if (left_child_index > Length () && right_child_index > Length ()) {
+				return true;
+			} else if (right_child_index > Length () && left_child_index == Length ()) {
+				return (heap_array [index] <= heap_array [left_child_index]);
+			} else {
+				bool left_is_heap = IsHeap (left_child_index) && (heap_array[index] <= heap_array[left_child_index]);
+				bool right_is_heap = IsHeap (right_child_index) && (heap_array[index] <= heap_array[right_child_index]);
+				return left_is_heap && right_is_heap;
+			}
+		}
+
+		public bool IsHeap(){
+			//Overloaded IsHeap. Runs IsHeap on the root node.
+			return IsHeap (1);
 		}
 
 	}
